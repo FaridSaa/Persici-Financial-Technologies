@@ -2,6 +2,6 @@
 {
     public interface IVehicle
     {
-        bool IsTaxFree { get; }
+        bool IsTollFree { get; }
     }
 }

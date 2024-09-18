@@ -2,6 +2,6 @@
 {
     public class Car : IVehicle
     {
-        public bool IsTaxFree => false;
+        public bool IsTollFree => false;
     }
 }

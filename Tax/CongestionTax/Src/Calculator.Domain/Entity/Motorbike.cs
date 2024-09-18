@@ -2,6 +2,6 @@
 {
     public class Motorbike : IVehicle
     {
-        public bool IsTaxFree => true;
+        public bool IsTollFree => true;
     }
 }
