@@ -2,6 +2,6 @@
 {
     public interface IVehicle
     {
-        bool IsTollFree { get; }
+        VehicleType GetVehicleType();
     }
 }

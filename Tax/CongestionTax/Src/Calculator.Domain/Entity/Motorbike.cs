@@ -2,6 +2,6 @@
 {
     public class Motorbike : IVehicle
     {
-        public bool IsTollFree => true;
+        public VehicleType GetVehicleType() => VehicleType.Motorcycles;
     }
 }
