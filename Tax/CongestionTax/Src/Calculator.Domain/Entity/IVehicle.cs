@@ -2,6 +2,6 @@
 {
     public interface IVehicle
     {
-        VehicleType GetVehicleType();
+        VehicleTypeEnum GetVehicleType();
     }
 }

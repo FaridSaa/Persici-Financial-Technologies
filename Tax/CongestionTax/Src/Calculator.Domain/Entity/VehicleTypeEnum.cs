@@ -1,6 +1,6 @@
 ﻿namespace Calculator.Domain.Entity
 {
-    public enum VehicleType
+    public enum VehicleTypeEnum
     {
         Car = 0,
         Emergency = 1,

@@ -1,8 +1,8 @@
-﻿namespace Calculator.DataAccess.Database.Entity
+﻿namespace Calculator.Domain.Entity.DbModel
 {
-    using Calculator.Domain.Entity;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
+    using Calculator.Domain.Entity;
 
     [Table(nameof(City))]
     public class City : ICity

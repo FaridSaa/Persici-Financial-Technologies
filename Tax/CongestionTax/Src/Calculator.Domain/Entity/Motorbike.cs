@@ -2,6 +2,6 @@
 {
     public class Motorbike : IVehicle
     {
-        public VehicleType GetVehicleType() => VehicleType.Motorcycles;
+        public VehicleTypeEnum GetVehicleType() => VehicleTypeEnum.Motorcycles;
     }
 }

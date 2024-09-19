@@ -1,6 +1,6 @@
 ﻿namespace Calculator.DataAccess.Database.Context
 {
-    using Calculator.DataAccess.Database.Entity;
+    using Calculator.Domain.Entity.DbModel;
     using Microsoft.EntityFrameworkCore;
 
     public class AppDbContext(DbContextOptions option) : DbContext(option)
