@@ -14,7 +14,15 @@
 
             _ = modelBuilder.Entity<VehicleType>().HasIndex(i => i.Category).IsUnique();
 
+            _ = modelBuilder.Entity<CityYear>().HasIndex(i => new { i.CityId, i.Year }).IsUnique();
+            _ = modelBuilder.Entity<CityYear>().HasOne(r => r.City).WithMany();
+
+
             base.OnModelCreating(modelBuilder);
+
+            //removing extra unnessesery index , this should call after base
+            var indexMetaData = modelBuilder.Entity<CityYear>().HasIndex(i=>i.CityId).Metadata;
+            modelBuilder.Entity<CityYear>().Metadata.RemoveIndex(indexMetaData);
         }
     }
 }
