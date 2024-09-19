@@ -1,4 +1,4 @@
-﻿namespace Calculator.Domain.Entity.DbModel
+﻿namespace Calculator.Infrastructure.Database.Entity
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;

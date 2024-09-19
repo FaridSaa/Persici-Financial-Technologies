@@ -1,6 +1,6 @@
-﻿namespace Calculator.DataAccess.Database.Context
+﻿namespace Calculator.Infrastructure.Database.Context
 {
-    using Calculator.Domain.Entity.DbModel;
+    using Calculator.Infrastructure.Database.Entity;
     using Microsoft.EntityFrameworkCore;
 
     public class AppDbContext(DbContextOptions option) : DbContext(option)
@@ -21,7 +21,7 @@
             base.OnModelCreating(modelBuilder);
 
             //removing extra unnessesery index , this should call after base
-            var indexMetaData = modelBuilder.Entity<CityYear>().HasIndex(i=>i.CityId).Metadata;
+            var indexMetaData = modelBuilder.Entity<CityYear>().HasIndex(i => i.CityId).Metadata;
             modelBuilder.Entity<CityYear>().Metadata.RemoveIndex(indexMetaData);
         }
     }

@@ -8,8 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Process\" />
-    <Folder Include="Repository\Database\" />
-    <Folder Include="Repository\File\" />
   </ItemGroup>
 
 </Project>
