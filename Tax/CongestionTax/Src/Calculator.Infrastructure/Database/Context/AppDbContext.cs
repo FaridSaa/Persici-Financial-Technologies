@@ -27,7 +27,6 @@
 
             _ = modelBuilder.Entity<CityYearCurrencyRuleSheet>().HasOne(r => r.CityYearCurrency).WithOne().OnDelete(DeleteBehavior.Cascade);
 
-
             _ = modelBuilder.Entity<CityYearCurrencyTaxFreeVehicleType>().HasIndex(i => new { i.CityYearCurrencyId, i.VehicleTypeId }).IsUnique();
             _ = modelBuilder.Entity<CityYearCurrencyTaxFreeVehicleType>().HasOne(r => r.CityYearCurrency).WithMany().OnDelete(DeleteBehavior.Cascade);
             _ = modelBuilder.Entity<CityYearCurrencyTaxFreeVehicleType>().HasOne(r => r.VehicleType).WithMany().OnDelete(DeleteBehavior.Cascade);
@@ -35,9 +34,8 @@
             _ = modelBuilder.Entity<CityYearCurrencyTaxFreeDatePeriod>().HasIndex(i => new { i.CityYearCurrencyId, i.From , i.To }).IsUnique();
             _ = modelBuilder.Entity<CityYearCurrencyTaxFreeDatePeriod>().HasOne(r => r.CityYearCurrency).WithMany().OnDelete(DeleteBehavior.Cascade);
 
-            _ = modelBuilder.Entity<CityYearCurrencyTollRateInterval>().HasIndex(i => new { i.CityYearCurrencyId, i.Duration }).IsUnique();
+            _ = modelBuilder.Entity<CityYearCurrencyTollRateInterval>().HasIndex(i => new { i.CityYearCurrencyId, i.From , i.To }).IsUnique();
             _ = modelBuilder.Entity<CityYearCurrencyTollRateInterval>().HasOne(r => r.CityYearCurrency).WithMany().OnDelete(DeleteBehavior.Cascade);
-
 
             _ = modelBuilder.Entity<HolidayTaxFreePeriod>().HasOne(r => r.CityYearCurrencyRuleSheet).WithOne().OnDelete(DeleteBehavior.Cascade);
 

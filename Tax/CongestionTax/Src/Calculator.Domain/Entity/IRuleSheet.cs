@@ -6,6 +6,7 @@
         int Year { get; set; }
         CurrencyUnitEnum CurrencyUnit { get; set; }
         IEnumerable<ITollRateInterval> TollRateIntervals { get; set; }
+        IEnumerable<DateTime> PublicHolidays { get; set; }
         IEnumerable<ITaxFreePeriod>? TaxFreePeriods { get; set; }
         IEnumerable<VehicleTypeEnum>? TaxFreeVehicleTypes { get; set; }
         IHolidayTaxFreePeriod? HolidayTaxFreePeriod { get; set; }

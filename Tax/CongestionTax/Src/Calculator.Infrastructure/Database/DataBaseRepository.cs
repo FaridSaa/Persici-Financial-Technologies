@@ -4,6 +4,7 @@
     using Calculator.Domain.Repository;
     using Calculator.Infrastructure.Database.Context;
     using Microsoft.EntityFrameworkCore;
+    using PublicHoliday;
     using System;
     using System.Linq;
 
@@ -12,6 +13,8 @@
         private readonly AppDbContext appDbContext = appDbContext;
         public async Task<IDictionary<int, IRuleSheet>> GetRuleSheetAsync(ICity city, IEnumerable<int> years, CancellationToken cancellationToken)
         {
+            var holidayHandler = new SwedenPublicHoliday();
+
             return await appDbContext.City
                 .AsNoTracking()
 
@@ -48,13 +51,14 @@
                     Year = x.SingleObjects.CityYearCurrency.Year,
                     CurrencyUnit = x.SingleObjects.CityYearCurrency.CurrencyUnit,
                     TollRateIntervals = x.TollRateIntervals,
+                    PublicHolidays = holidayHandler.PublicHolidays(x.SingleObjects.CityYearCurrency.Year),
                     TaxFreePeriods = x.TaxFreePeriods,
                     TaxFreeVehicleTypes = x.TaxFreeVehicleTypes,
                     HolidayTaxFreePeriod = x.SingleObjects.HolidayTaxFreePeriod,
                     MaxTollFeePerDay = x.SingleObjects.RuleSheet.MaxTollFeePerDay,
                     SingleChargeDurationPerMinute = x.SingleObjects.RuleSheet.SingleChargeDurationPerMinute,
                     IsWeekendTollFreeRuleApplied = x.SingleObjects.RuleSheet.IsWeekendTollFreeRuleApplied,
-                    IsHolidayTollFreeRuleApplied = x.SingleObjects.RuleSheet.IsHolidayTollFreeRuleApplied
+                    IsHolidayTollFreeRuleApplied = x.SingleObjects.RuleSheet.IsHolidayTollFreeRuleApplied,
                 })
                 .AsSplitQuery()
                 .ToDictionaryAsync(key => key.Year, value => value as IRuleSheet, cancellationToken)

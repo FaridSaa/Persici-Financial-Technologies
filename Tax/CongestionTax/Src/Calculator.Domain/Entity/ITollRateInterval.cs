@@ -2,7 +2,8 @@
 {
     public interface ITollRateInterval
     {
-        TimeSpan Duration { get; set; }
+        TimeSpan From { get; set; }
+        TimeSpan To { get; set; }
         int Fee { get; set; }
     }
 }

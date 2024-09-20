@@ -9,7 +9,8 @@
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Column(TypeName = "time"), Required] public TimeSpan Duration { get; set; }
+        [Column(TypeName = "time"), Required] public TimeSpan From { get; set; }
+        [Column(TypeName = "time"), Required] public TimeSpan To { get; set; }
         public int Fee { get; set; }
         public int CityYearCurrencyId { get; set; }
         [ForeignKey(nameof(CityYearCurrencyId))] public virtual CityYearCurrency? CityYearCurrency { get; set; }
