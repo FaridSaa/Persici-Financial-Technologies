@@ -10,6 +10,8 @@
         public DbSet<CityYear> CityYear { get; set; }
         public DbSet<CityYearTaxFreeVehicleType> CityYearTaxFreeVehicleType { get; set; }
         public DbSet<CityYearTaxFreeDatePeriod> CityYearTaxFreeDatePeriod { get; set; }
+        public DbSet<CityYearTollRateInterval> CityYearTollRateInterval { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -28,17 +30,16 @@
             _ = modelBuilder.Entity<CityYearTaxFreeDatePeriod>().HasIndex(i => new { i.CityYearId, i.From , i.To }).IsUnique();
             _ = modelBuilder.Entity<CityYearTaxFreeDatePeriod>().HasOne(r => r.CityYear).WithMany().OnDelete(DeleteBehavior.Cascade);
 
+            _ = modelBuilder.Entity<CityYearCurrencyUnit>().HasIndex(i => new { i.CityYearId, i.Unit }).IsUnique();
+            _ = modelBuilder.Entity<CityYearCurrencyUnit>().HasOne(r => r.CityYear).WithOne().OnDelete(DeleteBehavior.Cascade);
+
+            _ = modelBuilder.Entity<CityYearTollRateInterval>().HasIndex(i => new { i.CityYearCurrencyUnitId, i.Duration }).IsUnique();
+            _ = modelBuilder.Entity<CityYearTollRateInterval>().HasOne(r => r.CityYearCurrencyUnit).WithMany().OnDelete(DeleteBehavior.Cascade);
+
+
+
+
             base.OnModelCreating(modelBuilder);
-
-            //removing extra unnessesery index , this should call after base
-            var cityIndexMetaData = modelBuilder.Entity<CityYear>().HasIndex(i => i.CityId).Metadata;
-            modelBuilder.Entity<CityYear>().Metadata.RemoveIndex(cityIndexMetaData);
-
-            var cityYearIndexMetaData = modelBuilder.Entity<CityYearTaxFreeVehicleType>().HasIndex(i => i.CityYearId).Metadata;
-            modelBuilder.Entity<CityYearTaxFreeVehicleType>().Metadata.RemoveIndex(cityYearIndexMetaData);
-
-            var cityYearPeriodIndexMetaData = modelBuilder.Entity<CityYearTaxFreeDatePeriod>().HasIndex(i => i.CityYearId).Metadata;
-            modelBuilder.Entity<CityYearTaxFreeDatePeriod>().Metadata.RemoveIndex(cityYearPeriodIndexMetaData);
         }
     }
 }
