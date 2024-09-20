@@ -1,10 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Calculator.Infrastructure.Database.Entity
+﻿namespace Calculator.Infrastructure.Database.Entity
 {
+    using Calculator.Domain.Entity;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     [Table(nameof(HolidayTaxFreePeriod))]
-    public class HolidayTaxFreePeriod
+    public class HolidayTaxFreePeriod : IHolidayTaxFreePeriod
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

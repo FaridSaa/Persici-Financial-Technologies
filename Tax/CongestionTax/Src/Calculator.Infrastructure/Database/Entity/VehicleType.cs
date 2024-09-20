@@ -9,7 +9,7 @@
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Column(TypeName = "tinyint"), Required] public VehicleTypeEnum Category { get; set; }
+        [Column(TypeName = "tinyint"), Required] public VehicleTypeEnum Type { get; set; }
 
     }
 }
