@@ -11,6 +11,8 @@
         public DbSet<CityYearTaxFreeVehicleType> CityYearTaxFreeVehicleType { get; set; }
         public DbSet<CityYearTaxFreeDatePeriod> CityYearTaxFreeDatePeriod { get; set; }
         public DbSet<CityYearTollRateInterval> CityYearTollRateInterval { get; set; }
+        public DbSet<CityYearCurrencyRuleSheet> CityYearCurrencyRuleSheet { get; set; }
+        public DbSet<HolidayTaxFreePeriod> HolidayTaxFreePeriod { get; set; }
 
 
 
@@ -36,8 +38,9 @@
             _ = modelBuilder.Entity<CityYearTollRateInterval>().HasIndex(i => new { i.CityYearCurrencyUnitId, i.Duration }).IsUnique();
             _ = modelBuilder.Entity<CityYearTollRateInterval>().HasOne(r => r.CityYearCurrencyUnit).WithMany().OnDelete(DeleteBehavior.Cascade);
 
+            _ = modelBuilder.Entity<CityYearCurrencyRuleSheet>().HasOne(r => r.CityYearCurrencyUnit).WithOne().OnDelete(DeleteBehavior.Cascade);
 
-
+            _ = modelBuilder.Entity<HolidayTaxFreePeriod>().HasOne(r => r.CityYearCurrencyRuleSheet).WithOne().OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }
