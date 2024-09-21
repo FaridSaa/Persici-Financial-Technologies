@@ -8,13 +8,10 @@
         private readonly IRepository repository = repository;
         public async Task<IEnumerable<DateTax>> CalculateAsync(ICity city, IVehicle vehicle, IEnumerable<DateTime> dateTimes, CancellationToken cancellationToken)
         {
-            var years = dateTimes
-                .Select(s => s.Date.Year)
-                .Distinct();
+            //rather use input validation and using result pattern
 
-            var ruleSheetByYear = await repository
-                .GetRuleSheetAsync(city, years, cancellationToken)
-                .ConfigureAwait(false);
+            var years = dateTimes.Select(s => s.Date.Year).Distinct();
+            var ruleSheetByYear = await repository.GetRuleSheetAsync(city, years, cancellationToken).ConfigureAwait(false);
 
             var dateTimesPerDay = dateTimes
                 .GroupBy(x => x.Date)
@@ -86,7 +83,7 @@
                 {
                     var filteredTimeSpans = new List<TimeSpan>();
                     var sortedTimeSpans = datePeriods.Time;
-                    for (int i = 0; i < sortedTimeSpans.Count;)
+                    for (int i = 0; i < sortedTimeSpans.Count; i++)
                     {
                         var sequence = new List<TimeSpan>();
                         for (int j = i + 1; j < sortedTimeSpans.Count; j++)
@@ -114,7 +111,7 @@
 
                 foreach (var each in datePeriods.Time)
                 {
-                    var rate = ruleSheet.TollRateIntervals.FirstOrDefault(x => each >= x.From && each <= x.To);
+                    var rate = ruleSheet.TollRateIntervals.FirstOrDefault(x => each >= x.From && each <= x.To) ?? ruleSheet.TollRateIntervals.Last(x => each >= x.From);
                     if (rate is not null)
                     {
                         dayFee += rate.Fee;

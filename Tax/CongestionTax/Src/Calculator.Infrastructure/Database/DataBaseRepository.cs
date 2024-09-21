@@ -27,7 +27,9 @@
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
 
-            var tollRateByYear = tollRateIntervalCombinedData.GroupBy(x => x.cycId).ToDictionary(k => k.Key, v => v.Select(i => i.tri));
+            var tollRateByYear = tollRateIntervalCombinedData
+                .GroupBy(x => x.cycId)
+                .ToDictionary(k => k.Key, v => v.Select(i => i.tri).OrderBy(o => o.From).AsEnumerable());
 
             var taxFreeVehicleCombinedData = await cityYearBaseQuerable
                 .Join(appDbContext.CityYearCurrencyTaxFreeVehicleType, s => s.cyc.Id, tfvt => tfvt.CityYearCurrencyId, (s, tfvt) => new { cycId = s.cyc.Id, tfvt.VehicleType!.Type })

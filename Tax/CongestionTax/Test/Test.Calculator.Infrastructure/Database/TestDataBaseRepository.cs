@@ -11,9 +11,9 @@ namespace Test.Calculator.Infrastructure.Database
         {
             //Arrage
             using var db = new InMemorySqlite(InMemorySqlite.CreateNewContextOptions());
-            var swedenHolidays = new PublicHoliday.SwedenPublicHoliday();
-            var publicHolidays = swedenHolidays.PublicHolidays(2013);
-            var dbRepo = new DataBaseRepository(db.DbContext, swedenHolidays);
+
+            //rather use library who implemented interface for DI
+            var dbRepo = new DataBaseRepository(db.DbContext, new PublicHoliday.SwedenPublicHoliday());
 
             var mockCity = new Mock<ICity>();
             mockCity.SetupGet(x => x.Name).Returns("Gothenburg");
