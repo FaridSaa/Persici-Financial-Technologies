@@ -32,52 +32,56 @@
                 }).OrderBy(o => o.Date);
 
             var tollFees = new List<DateTax>();
-            foreach (var dayIntervals in dateTimesPerDay)
+            foreach (var datePeriods in dateTimesPerDay)
             {
-                if (!ruleSheetByYear.TryGetValue(dayIntervals.Date.Year, out var ruleSheet))
+                if (!ruleSheetByYear.TryGetValue(datePeriods.Date.Year, out var ruleSheet))
                 {
                     continue;
                 }
+
                 if (ruleSheet.TaxFreeVehicleTypes != null && ruleSheet.TaxFreeVehicleTypes.Contains(vehicle.GetVehicleType()))
                 {
-                    tollFees.Add(new DateTax() { Date = dayIntervals.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
+                    tollFees.Add(new DateTax() { Date = datePeriods.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
                     continue;
                 }
+
                 if (ruleSheet.IsWeekendTollFreeRuleApplied)
                 {
-                    if (dayIntervals.Date is { DayOfWeek: DayOfWeek.Saturday or DayOfWeek.Sunday })
+                    if (datePeriods.Date is { DayOfWeek: DayOfWeek.Saturday or DayOfWeek.Sunday })
                     {
-                        tollFees.Add(new DateTax() { Date = dayIntervals.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
+                        tollFees.Add(new DateTax() { Date = datePeriods.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
                         continue;
                     }
                 }
+
                 if (ruleSheet.TaxFreePeriods is not null)
                 {
-                    var isTaxFreeDate = ruleSheet.TaxFreePeriods.Any(x => x.From <= dayIntervals.Date && dayIntervals.Date <= x.To);
+                    var isTaxFreeDate = ruleSheet.TaxFreePeriods.Any(x => x.From <= datePeriods.Date && datePeriods.Date <= x.To);
                     if (isTaxFreeDate)
                     {
-                        tollFees.Add(new DateTax() { Date = dayIntervals.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
+                        tollFees.Add(new DateTax() { Date = datePeriods.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
                         continue;
                     }
                 }
+
                 if (ruleSheet.IsHolidayTollFreeRuleApplied)
                 {
-                    if (ruleSheet.PublicHolidays.Contains(dayIntervals.Date))
+                    if (ruleSheet.PublicHolidays.Contains(datePeriods.Date))
                     {
-                        tollFees.Add(new DateTax() { Date = dayIntervals.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
+                        tollFees.Add(new DateTax() { Date = datePeriods.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
                         continue;
                     }
                     if (ruleSheet.HolidayTaxFreePeriod is not null)
                     {
                         var isDateInAfterHolidayPeriod = ruleSheet.PublicHolidays
-                            .Any(x => x.Date <= dayIntervals.Date && dayIntervals.Date <= x.Date.AddDays(ruleSheet.HolidayTaxFreePeriod.DayAfter));
+                            .Any(x => x.Date <= datePeriods.Date && datePeriods.Date <= x.Date.AddDays(ruleSheet.HolidayTaxFreePeriod.DayAfter));
 
                         var isDateInBeforeHolidayPeriod = ruleSheet.PublicHolidays
-                            .Any(x => x.Date >= dayIntervals.Date && dayIntervals.Date >= x.Date.AddDays(ruleSheet.HolidayTaxFreePeriod.DayBefore * -1));
+                            .Any(x => x.Date >= datePeriods.Date && datePeriods.Date >= x.Date.AddDays(ruleSheet.HolidayTaxFreePeriod.DayBefore * -1));
 
                         if (isDateInAfterHolidayPeriod || isDateInBeforeHolidayPeriod)
                         {
-                            tollFees.Add(new DateTax() { Date = dayIntervals.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
+                            tollFees.Add(new DateTax() { Date = datePeriods.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
                             continue;
                         }
                     }
@@ -87,7 +91,7 @@
                 if (ruleSheet.SingleChargeDurationPerMinute is not null)
                 {
                     var filteredTimeSpans = new List<TimeSpan>();
-                    var sortedTimeSpans = dayIntervals.Time;
+                    var sortedTimeSpans = datePeriods.Time;
                     for (int i = 0; i < sortedTimeSpans.Count;)
                     {
                         var sequence = new List<TimeSpan>();
@@ -111,10 +115,10 @@
                             }
                         }
                     }
-                    filteredTimeSpans.ForEach(i => dayIntervals.Time.Remove(i));
+                    filteredTimeSpans.ForEach(i => datePeriods.Time.Remove(i));
                 }
 
-                foreach (var each in dayIntervals.Time)
+                foreach (var each in datePeriods.Time)
                 {
                     var rate = ruleSheet.TollRateIntervals.First(x => each >= x.From && each <= x.To);
                     dayFee += rate.Fee;
@@ -124,7 +128,7 @@
                 {
                     dayFee = ruleSheet.MaxTollFeePerDay.Value;
                 }
-                tollFees.Add(new DateTax() { Date = dayIntervals.Date, Fee = dayFee, Unit = ruleSheet.CurrencyUnit });
+                tollFees.Add(new DateTax() { Date = datePeriods.Date, Fee = dayFee, Unit = ruleSheet.CurrencyUnit });
             }
             return tollFees;
         }

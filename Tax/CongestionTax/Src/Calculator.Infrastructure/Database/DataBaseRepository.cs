@@ -8,13 +8,13 @@
     using System;
     using System.Linq;
 
-    public class DataBaseRepository(AppDbContext appDbContext) : IRepository
+    public class DataBaseRepository(AppDbContext appDbContext, SwedenPublicHoliday swedenPublicHoliday) : IRepository
     {
         private readonly AppDbContext appDbContext = appDbContext;
+        private readonly SwedenPublicHoliday swedenPublicHoliday = swedenPublicHoliday;
+
         public async Task<IDictionary<int, IRuleSheet>> GetRuleSheetAsync(ICity city, IEnumerable<int> years, CancellationToken cancellationToken)
         {
-            var holidayHandler = new SwedenPublicHoliday();
-
             return await appDbContext.City
                 .AsNoTracking()
 
@@ -51,7 +51,7 @@
                     Year = x.SingleObjects.CityYearCurrency.Year,
                     CurrencyUnit = x.SingleObjects.CityYearCurrency.CurrencyUnit,
                     TollRateIntervals = x.TollRateIntervals,
-                    PublicHolidays = holidayHandler.PublicHolidays(x.SingleObjects.CityYearCurrency.Year),
+                    PublicHolidays = swedenPublicHoliday.PublicHolidays(x.SingleObjects.CityYearCurrency.Year),
                     TaxFreePeriods = x.TaxFreePeriods,
                     TaxFreeVehicleTypes = x.TaxFreeVehicleTypes,
                     HolidayTaxFreePeriod = x.SingleObjects.HolidayTaxFreePeriod,
