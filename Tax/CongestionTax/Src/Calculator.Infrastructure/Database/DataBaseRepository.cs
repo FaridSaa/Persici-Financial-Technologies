@@ -27,27 +27,21 @@
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
 
-            var tollRateByYear = tollRateIntervalCombinedData
-                .GroupBy(x => x.cycId)
-                .ToDictionary(k => k.Key, v => v.Select(i => i.tri));
+            var tollRateByYear = tollRateIntervalCombinedData.GroupBy(x => x.cycId).ToDictionary(k => k.Key, v => v.Select(i => i.tri));
 
             var taxFreeVehicleCombinedData = await cityYearBaseQuerable
                 .Join(appDbContext.CityYearCurrencyTaxFreeVehicleType, s => s.cyc.Id, tfvt => tfvt.CityYearCurrencyId, (s, tfvt) => new { cycId = s.cyc.Id, tfvt.VehicleType!.Type })
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
 
-            var taxFreeVehicleByYear = taxFreeVehicleCombinedData?
-                .GroupBy(x => x.cycId)
-                .ToDictionary(k => k.Key, v => v.Select(i => i.Type));
+            var taxFreeVehicleByYear = taxFreeVehicleCombinedData?.GroupBy(x => x.cycId).ToDictionary(k => k.Key, v => v.Select(i => i.Type));
 
             var taxFreeDatePeriodCombinedData = await cityYearBaseQuerable
                .Join(appDbContext.CityYearCurrencyTaxFreeDatePeriod, s => s.cyc.Id, tfdp => tfdp.CityYearCurrencyId, (s, tfdp) => new { cycId = s.cyc.Id, tfdp })
                .ToListAsync(cancellationToken)
                .ConfigureAwait(false);
 
-            var taxFreeDatePeriodByYear = taxFreeDatePeriodCombinedData?
-                .GroupBy(x => x.cycId)
-                .ToDictionary(k => k.Key, v => v.Select(i => i.tfdp));
+            var taxFreeDatePeriodByYear = taxFreeDatePeriodCombinedData?.GroupBy(x => x.cycId).ToDictionary(k => k.Key, v => v.Select(i => i.tfdp));
 
             return await cityYearBaseQuerable
             .Join(appDbContext.CityYearCurrencyRuleSheet, s => s.cyc.Id, cycr => cycr.CityYearCurrencyId, (s, cycr) => new { s.c, s.cyc, cycr })
