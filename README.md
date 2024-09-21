@@ -1,5 +1,8 @@
 *Project Report*
 
+Framework:
+I upgraded the project framework from .NET Core 3.1 to .NET 8, leveraging the latest advancements in the .NET ecosystem.
+
 Architecture:
 I utilized the Onion (Layered) Architecture with a Domain-Driven Design (DDD) approach in mind , enhancing the maintainability, scalability, and testability of the application.
 
