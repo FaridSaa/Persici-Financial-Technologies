@@ -1,6 +1,6 @@
 ﻿namespace Calculator.Domain.Entity
 {
-    public class DateTollFee
+    public class DateTax
     {
         public DateTime Date { get; set; }
         public int Fee { get; set; }
