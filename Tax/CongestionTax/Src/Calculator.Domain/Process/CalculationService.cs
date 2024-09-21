@@ -21,13 +21,7 @@
                 .Select(x => new
                 {
                     x.Key.Date,
-                    Time = x
-                    .Where(i => i.TimeOfDay >= ruleSheetByYear[x.Key.Year].TollRateIntervals.Min(m => m.From))
-                    .Where(i => i.TimeOfDay <= ruleSheetByYear[x.Key.Year].TollRateIntervals.Max(m => m.To))
-                    .Select(i => i.TimeOfDay)
-                    .Distinct()
-                    .OrderBy(o => o)
-                    .ToList()
+                    Time = x.Select(i => i.TimeOfDay).Distinct().OrderBy(o => o).ToList()
 
                 }).OrderBy(o => o.Date);
 
@@ -120,8 +114,11 @@
 
                 foreach (var each in datePeriods.Time)
                 {
-                    var rate = ruleSheet.TollRateIntervals.First(x => each >= x.From && each <= x.To);
-                    dayFee += rate.Fee;
+                    var rate = ruleSheet.TollRateIntervals.FirstOrDefault(x => each >= x.From && each <= x.To);
+                    if (rate is not null)
+                    {
+                        dayFee += rate.Fee;
+                    }
                 }
 
                 if (ruleSheet.MaxTollFeePerDay is not null && dayFee > ruleSheet.MaxTollFeePerDay)
