@@ -138,6 +138,7 @@
                 {
                     dayFee = ruleSheet.MaxTollFeePerDay.Value;
                 }
+                tollFees.Add(new DateTollFee() { Date = dayIntervals.Date, Fee = dayFee, Unit = ruleSheet.CurrencyUnit });
             }
             return tollFees;
         }
