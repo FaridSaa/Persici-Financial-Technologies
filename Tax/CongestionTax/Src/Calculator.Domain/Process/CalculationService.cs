@@ -111,7 +111,11 @@
 
                 foreach (var each in datePeriods.Time)
                 {
-                    var rate = ruleSheet.TollRateIntervals.FirstOrDefault(x => each >= x.From && each <= x.To) ?? ruleSheet.TollRateIntervals.Last(x => each >= x.From);
+                    var rate = ruleSheet.TollRateIntervals.FirstOrDefault(x => each >= x.From && each <= x.To)
+                        ?? ruleSheet.TollRateIntervals
+                        .Where(x => (x.To - x.From).TotalMinutes < 0)
+                        .Where(x => each >= x.From).Last();
+
                     if (rate is not null)
                     {
                         dayFee += rate.Fee;
