@@ -15,54 +15,63 @@
 
         public async Task<IDictionary<int, IRuleSheet>> GetRuleSheetAsync(ICity city, IEnumerable<int> years, CancellationToken cancellationToken)
         {
-            return await appDbContext.City
+            var cityYearBaseQuerable = appDbContext.City
                 .AsNoTracking()
-
                 .Where(x => x.Name == city.Name)
-
                 .Join(appDbContext.CityYearCurrency, c => c.Id, cyc => cyc.CityId, (c, cyc) => new { c, cyc })
-
                 .Where(x => years.Contains(x.cyc.Year))
+                .AsSplitQuery();
 
-                .Join(appDbContext.CityYearCurrencyRuleSheet, s => s.cyc.Id, cycr => cycr.CityYearCurrencyId, (s, cycr) => new { s.c, s.cyc, cycr })
-
-                .Join(appDbContext.CityYearCurrencyTollRateInterval, s => s.cyc.Id, tri => tri.CityYearCurrencyId, (s, tri) => new { s.c, s.cyc, s.cycr, tri })
-
-                .GroupJoin(appDbContext.CityYearCurrencyTaxFreeVehicleType, s => s.cyc.Id, tfvt => tfvt.CityYearCurrencyId, (s, tfvt) => new { s.c, s.cyc, s.cycr, s.tri, tfvt })
-                .SelectMany(g => g.tfvt.DefaultIfEmpty(), (s, tfvt) => new { s.c, s.cyc, s.cycr, s.tri, tfvt })
-
-                .GroupJoin(appDbContext.CityYearCurrencyTaxFreeDatePeriod, s => s.cyc.Id, tfdp => tfdp.CityYearCurrencyId, (s, tfdp) => new { s.c, s.cyc, s.cycr, s.tri, s.tfvt, tfdp })
-                .SelectMany(g => g.tfdp.DefaultIfEmpty(), (s, tfdp) => new { s.c, s.cyc, s.cycr, s.tri, s.tfvt, tfdp })
-
-                .GroupJoin(appDbContext.HolidayTaxFreePeriod, s => s.cycr.Id, htfp => htfp.CityYearCurrencyRuleSheetId, (s, htfp) => new { s.c, s.cyc, s.cycr, s.tri, s.tfvt, s.tfdp, htfp })
-                .SelectMany(g => g.htfp.DefaultIfEmpty(), (s, htfp) => new { s.c, s.cyc, s.cycr, s.tri, s.tfvt, s.tfdp, htfp })
-
-                .GroupBy(x => x.cyc.Id)
-                .Select(x => new
-                {
-                    SingleObjects = x.Select(s => new { City = s.c, CityYearCurrency = s.cyc, RuleSheet = s.cycr, HolidayTaxFreePeriod = s.htfp }).First(),
-                    TollRateIntervals = x.Select(s => s.tri),
-                    TaxFreeVehicleTypes = x.Where(s => s.tfvt != null).Select(s => s.tfvt!.VehicleType!.Type),
-                    TaxFreePeriods = x.Where(s => s.tfdp != null).Select(s => s.tfdp!),
-                })
-                .Select(x => new RuleSheet()
-                {
-                    City = x.SingleObjects.City,
-                    Year = x.SingleObjects.CityYearCurrency.Year,
-                    CurrencyUnit = x.SingleObjects.CityYearCurrency.CurrencyUnit,
-                    TollRateIntervals = x.TollRateIntervals,
-                    PublicHolidays = swedenPublicHoliday.PublicHolidays(x.SingleObjects.CityYearCurrency.Year),
-                    TaxFreePeriods = x.TaxFreePeriods,
-                    TaxFreeVehicleTypes = x.TaxFreeVehicleTypes,
-                    HolidayTaxFreePeriod = x.SingleObjects.HolidayTaxFreePeriod,
-                    MaxTollFeePerDay = x.SingleObjects.RuleSheet.MaxTollFeePerDay,
-                    SingleChargeDurationPerMinute = x.SingleObjects.RuleSheet.SingleChargeDurationPerMinute,
-                    IsWeekendTollFreeRuleApplied = x.SingleObjects.RuleSheet.IsWeekendTollFreeRuleApplied,
-                    IsHolidayTollFreeRuleApplied = x.SingleObjects.RuleSheet.IsHolidayTollFreeRuleApplied,
-                })
-                .AsSplitQuery()
-                .ToDictionaryAsync(key => key.Year, value => value as IRuleSheet, cancellationToken)
+            var tollRateIntervalCombinedData = await cityYearBaseQuerable
+                .Join(appDbContext.CityYearCurrencyTollRateInterval, s => s.cyc.Id, tri => tri.CityYearCurrencyId, (s, tri) => new { cycId = s.cyc.Id, tri })
+                .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
+
+            var tollRateByYear = tollRateIntervalCombinedData
+                .GroupBy(x => x.cycId)
+                .ToDictionary(k => k.Key, v => v.Select(i => i.tri));
+
+            var taxFreeVehicleCombinedData = await cityYearBaseQuerable
+                .Join(appDbContext.CityYearCurrencyTaxFreeVehicleType, s => s.cyc.Id, tfvt => tfvt.CityYearCurrencyId, (s, tfvt) => new { cycId = s.cyc.Id, tfvt.VehicleType!.Type })
+                .ToListAsync(cancellationToken)
+                .ConfigureAwait(false);
+
+            var taxFreeVehicleByYear = taxFreeVehicleCombinedData?
+                .GroupBy(x => x.cycId)
+                .ToDictionary(k => k.Key, v => v.Select(i => i.Type));
+
+            var taxFreeDatePeriodCombinedData = await cityYearBaseQuerable
+               .Join(appDbContext.CityYearCurrencyTaxFreeDatePeriod, s => s.cyc.Id, tfdp => tfdp.CityYearCurrencyId, (s, tfdp) => new { cycId = s.cyc.Id, tfdp })
+               .ToListAsync(cancellationToken)
+               .ConfigureAwait(false);
+
+            var taxFreeDatePeriodByYear = taxFreeDatePeriodCombinedData?
+                .GroupBy(x => x.cycId)
+                .ToDictionary(k => k.Key, v => v.Select(i => i.tfdp));
+
+            return await cityYearBaseQuerable
+            .Join(appDbContext.CityYearCurrencyRuleSheet, s => s.cyc.Id, cycr => cycr.CityYearCurrencyId, (s, cycr) => new { s.c, s.cyc, cycr })
+
+            .GroupJoin(appDbContext.HolidayTaxFreePeriod, s => s.cycr.Id, htfp => htfp.CityYearCurrencyRuleSheetId, (s, htfp) => new { s.c, s.cyc, s.cycr, htfp })
+            .SelectMany(g => g.htfp.DefaultIfEmpty(), (s, htfp) => new { s.c, s.cyc, s.cycr, htfp })
+
+            .Select(x => new RuleSheet()
+            {
+                City = x.c,
+                Year = x.cyc.Year,
+                CurrencyUnit = x.cyc.CurrencyUnit,
+                TollRateIntervals = tollRateByYear[x.cyc.Id],
+                PublicHolidays = swedenPublicHoliday.PublicHolidays(x.cyc.Year),
+                TaxFreePeriods = taxFreeDatePeriodByYear != null ? taxFreeDatePeriodByYear[x.cyc.Id] : null,
+                TaxFreeVehicleTypes = taxFreeVehicleByYear != null ? taxFreeVehicleByYear[x.cyc.Id] : null,
+                HolidayTaxFreePeriod = x.htfp,
+                MaxTollFeePerDay = x.cycr.MaxTollFeePerDay,
+                SingleChargeDurationPerMinute = x.cycr.SingleChargeDurationPerMinute,
+                IsWeekendTollFreeRuleApplied = x.cycr.IsWeekendTollFreeRuleApplied,
+                IsHolidayTollFreeRuleApplied = x.cycr.IsHolidayTollFreeRuleApplied,
+            })
+            .ToDictionaryAsync(key => key.Year, value => value as IRuleSheet, cancellationToken)
+            .ConfigureAwait(false);
         }
     }
 }
