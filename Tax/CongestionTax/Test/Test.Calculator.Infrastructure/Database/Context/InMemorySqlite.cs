@@ -1,15 +1,14 @@
-﻿namespace Test.Calculator.Infrastructure.Database
+﻿using Calculator.Infrastructure.Database.Context;
+using Calculator.Infrastructure.Database.Entity;
+using Calculator.Domain.Entity;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
+using System.Data.Common;
+
+namespace Test.Calculator.Infrastructure.Database
 {
-    using global::Calculator.Infrastructure.Database.Context;
-    using global::Calculator.Infrastructure.Database.Entity;
-    using global::Calculator.Domain.Entity;
-
-    using Microsoft.Data.Sqlite;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.EntityFrameworkCore.Infrastructure;
-    using Microsoft.Extensions.DependencyInjection;
-    using System.Data.Common;
-
     public class InMemorySqlite : IDisposable
     {
         private readonly DbConnection? _connection;
