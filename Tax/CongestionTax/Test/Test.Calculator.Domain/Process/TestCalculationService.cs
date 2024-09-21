@@ -234,8 +234,8 @@ namespace Test.Calculator.Domain.Process
                 VehicleTypeEnum.Foreign
             });
             var holidayPeriod = new Mock<IHolidayTaxFreePeriod>();
-            holidayPeriod.Object.DayAfter = 1;
-            holidayPeriod.Object.DayBefore = 1;
+            holidayPeriod.SetupGet(x => x.DayAfter).Returns(1).Verifiable();
+            holidayPeriod.SetupGet(x => x.DayBefore).Returns(1).Verifiable();
 
             mockRuleSheet.SetupGet(x => x.HolidayTaxFreePeriod).Returns(holidayPeriod.Object);
             mockRuleSheet.SetupGet(x => x.MaxTollFeePerDay).Returns(60);
@@ -270,16 +270,14 @@ namespace Test.Calculator.Domain.Process
                 //july
                 new(2013, 07, 28, 14, 07, 27),
                
-                //wrong order
-                publicHolidays.Where(x => x.Month is 4).First(),
-                //holiday
-                publicHolidays.Where(x => x.Month is 1).Last(),
+                //wrong order holidays
+                publicHolidays.Where(x => x.Month == 4).First(),
+                //day befor holiday
+                publicHolidays.Where(x => x.Month == 1).Last().AddDays(-1),
 
                 //weekend
                 new(2013, 10, 19, 14, 07, 27),
             };
-
-
 
             //Act
             var caculationService = new CalculationService(mockRepository.Object);
@@ -308,7 +306,7 @@ namespace Test.Calculator.Domain.Process
             Assert.Equal(8, taxableFeePerDay[5].Fee);
             Assert.Equal(new DateTime(2013, 03, 26), taxableFeePerDay[5].Date);
 
-            Assert.Equal(8, taxableFeePerDay[6].Fee);
+            Assert.Equal(0, taxableFeePerDay[6].Fee);
             Assert.Equal(new DateTime(2013, 03, 28), taxableFeePerDay[6].Date);
 
             Assert.Equal(0, taxableFeePerDay[7].Fee);
@@ -319,6 +317,11 @@ namespace Test.Calculator.Domain.Process
 
             Assert.Equal(0, taxableFeePerDay[9].Fee);
             Assert.Equal(new DateTime(2013, 10, 19), taxableFeePerDay[9].Date);
+
+            holidayPeriod.VerifyGet(x => x.DayBefore, Times.AtLeast(1));
+            holidayPeriod.VerifyGet(x => x.DayAfter, Times.AtLeast(1));
+
+            Assert.Contains(new DateTime(2013, 03, 29), publicHolidays.Select(x => x.Date));
         }
 
         [Fact]
@@ -423,7 +426,7 @@ namespace Test.Calculator.Domain.Process
             Assert.NotNull(dateTax);
 
             Assert.Equal(10, taxableFeePerDay.Count);
-            Assert.Equal(0, taxableFeePerDay.Sum(i=>i.Fee));
+            Assert.Equal(0, taxableFeePerDay.Sum(i => i.Fee));
         }
 
         //test whit diffrent rule sheet diffrent city diffrent year

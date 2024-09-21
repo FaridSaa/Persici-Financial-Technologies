@@ -8,7 +8,8 @@
         private readonly IRepository repository = repository;
         public async Task<IEnumerable<DateTax>> CalculateAsync(ICity city, IVehicle vehicle, IEnumerable<DateTime> dateTimes, CancellationToken cancellationToken)
         {
-            //rather use fluent validation on input model and using result pattern for output
+            //rather use fluent validation on input and using result pattern for output
+            //first version of logic , rather improve
 
             var years = dateTimes.Select(s => s.Date.Year).Distinct();
             var ruleSheetByYear = await repository.GetRuleSheetAsync(city, years, cancellationToken).ConfigureAwait(false);
@@ -32,7 +33,7 @@
 
                 if (ruleSheet.TaxFreeVehicleTypes != null && ruleSheet.TaxFreeVehicleTypes.Contains(vehicle.GetVehicleType()))
                 {
-                    tollFees.Add(new DateTax() { Date = dateTimePerDay.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
+                    tollFees.Add(new() { Date = dateTimePerDay.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
                     continue;
                 }
 
@@ -40,7 +41,7 @@
                 {
                     if (dateTimePerDay.Date is { DayOfWeek: DayOfWeek.Saturday or DayOfWeek.Sunday })
                     {
-                        tollFees.Add(new DateTax() { Date = dateTimePerDay.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
+                        tollFees.Add(new() { Date = dateTimePerDay.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
                         continue;
                     }
                 }
@@ -50,7 +51,7 @@
                     var isTaxFreeDate = ruleSheet.TaxFreePeriods.Any(x => x.From <= dateTimePerDay.Date && dateTimePerDay.Date <= x.To);
                     if (isTaxFreeDate)
                     {
-                        tollFees.Add(new DateTax() { Date = dateTimePerDay.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
+                        tollFees.Add(new() { Date = dateTimePerDay.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
                         continue;
                     }
                 }
@@ -59,20 +60,16 @@
                 {
                     if (ruleSheet.PublicHolidays.Contains(dateTimePerDay.Date))
                     {
-                        tollFees.Add(new DateTax() { Date = dateTimePerDay.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
+                        tollFees.Add(new() { Date = dateTimePerDay.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
                         continue;
                     }
                     if (ruleSheet.HolidayTaxFreePeriod is not null)
                     {
-                        var isDateInAfterHolidayPeriod = ruleSheet.PublicHolidays
-                            .Any(x => x.Date <= dateTimePerDay.Date && dateTimePerDay.Date <= x.Date.AddDays(ruleSheet.HolidayTaxFreePeriod.DayAfter));
-
-                        var isDateInBeforeHolidayPeriod = ruleSheet.PublicHolidays
-                            .Any(x => x.Date >= dateTimePerDay.Date && dateTimePerDay.Date >= x.Date.AddDays(ruleSheet.HolidayTaxFreePeriod.DayBefore * -1));
-
+                        var isDateInBeforeHolidayPeriod = ruleSheet.PublicHolidays.Any(x => dateTimePerDay.Date.AddDays(ruleSheet.HolidayTaxFreePeriod.DayAfter) == x.Date);
+                        var isDateInAfterHolidayPeriod = ruleSheet.PublicHolidays.Any(x => dateTimePerDay.Date.AddDays(ruleSheet.HolidayTaxFreePeriod.DayBefore * -1) == x.Date);
                         if (isDateInAfterHolidayPeriod || isDateInBeforeHolidayPeriod)
                         {
-                            tollFees.Add(new DateTax() { Date = dateTimePerDay.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
+                            tollFees.Add(new() { Date = dateTimePerDay.Date, Fee = 0, Unit = ruleSheet.CurrencyUnit });
                             continue;
                         }
                     }
@@ -114,7 +111,7 @@
                     var rate = ruleSheet.TollRateIntervals.FirstOrDefault(x => each >= x.From && each <= x.To)
                         ?? ruleSheet.TollRateIntervals
                         .Where(x => (x.To - x.From).TotalMinutes < 0)
-                        .Where(x => each >= x.From).Last();
+                        .Where(x => each >= x.From).LastOrDefault();
 
                     if (rate is not null)
                     {
@@ -126,7 +123,7 @@
                 {
                     dayFee = ruleSheet.MaxTollFeePerDay.Value;
                 }
-                tollFees.Add(new DateTax() { Date = dateTimePerDay.Date, Fee = dayFee, Unit = ruleSheet.CurrencyUnit });
+                tollFees.Add(new() { Date = dateTimePerDay.Date, Fee = dayFee, Unit = ruleSheet.CurrencyUnit });
             }
             return tollFees;
         }
