@@ -8,8 +8,8 @@
         private readonly IRepository repository = repository;
         public async Task<IEnumerable<DateTax>> CalculateAsync(ICity city, IVehicle vehicle, IEnumerable<DateTime> dateTimes, CancellationToken cancellationToken)
         {
-            //rather use fluent validation on input and using result pattern for output
-            //first version of logic , rather improve
+            //i would use fluent validation on input and using result pattern for output
+            //first version of logic , maybe later some improvment
 
             var years = dateTimes.Select(s => s.Date.Year).Distinct();
             var ruleSheetByYear = await repository.GetRuleSheetAsync(city, years, cancellationToken).ConfigureAwait(false);

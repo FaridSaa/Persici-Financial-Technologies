@@ -3,7 +3,7 @@
     using Calculator.Infrastructure.Database.Entity;
     using Microsoft.EntityFrameworkCore;
 
-    public class AppDbContext(DbContextOptions option) : DbContext(option)
+    public class AppDbContext(DbContextOptions option) : DbContext(option) //define db config from IoC container
     {
         public DbSet<City> City { get; set; }
         public DbSet<VehicleType> VehicleType { get; set; }
@@ -13,8 +13,6 @@
         public DbSet<CityYearCurrencyTollRateInterval> CityYearCurrencyTollRateInterval { get; set; }
         public DbSet<CityYearCurrencyRuleSheet> CityYearCurrencyRuleSheet { get; set; }
         public DbSet<HolidayTaxFreePeriod> HolidayTaxFreePeriod { get; set; }
-
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -40,6 +38,8 @@
             _ = modelBuilder.Entity<HolidayTaxFreePeriod>().HasOne(r => r.CityYearCurrencyRuleSheet).WithOne().OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
+
+            //probably removing some repeat indexes here after base call , combined indexes contains FK index too
         }
     }
 }

@@ -15,6 +15,8 @@
 
         public async Task<IDictionary<int, IRuleSheet>> GetRuleSheetAsync(ICity city, IEnumerable<int> years, CancellationToken cancellationToken)
         {
+            //perhaps we can reduce query request maybe later
+
             var cityYearBaseQuerable = appDbContext.City
                 .AsNoTracking()
                 .Where(x => x.Name == city.Name)
