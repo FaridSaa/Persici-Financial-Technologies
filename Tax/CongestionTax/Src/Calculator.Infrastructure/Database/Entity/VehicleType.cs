@@ -2,7 +2,7 @@
 {
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
-    using Calculator.Domain.Entity;
+    using Calculator.Domain.Entity.Enum;
 
     [Table(nameof(VehicleType))]
     public class VehicleType

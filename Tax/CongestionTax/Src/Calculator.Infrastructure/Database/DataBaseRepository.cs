@@ -1,17 +1,17 @@
 ﻿namespace Calculator.Infrastructure.Database
 {
     using Calculator.Domain.Entity;
+    using Calculator.Domain.Entity.Interface;
     using Calculator.Domain.Repository;
     using Calculator.Infrastructure.Database.Context;
     using Microsoft.EntityFrameworkCore;
-    using PublicHoliday;
     using System;
     using System.Linq;
 
-    public class DataBaseRepository(AppDbContext appDbContext, SwedenPublicHoliday swedenPublicHoliday) : IRepository
+    public class DataBaseRepository(AppDbContext appDbContext, IHolidayRepository holidayRepository) : IRepository
     {
         private readonly AppDbContext appDbContext = appDbContext;
-        private readonly SwedenPublicHoliday swedenPublicHoliday = swedenPublicHoliday;
+        private readonly IHolidayRepository holidayRepository = holidayRepository;
 
         public async Task<IDictionary<int, IRuleSheet>> GetRuleSheetAsync(ICity city, IEnumerable<int> years, CancellationToken cancellationToken)
         {
@@ -25,7 +25,7 @@
                 .AsSplitQuery();
 
             var tollRateIntervalCombinedData = await cityYearBaseQuerable
-                .Join(appDbContext.CityYearCurrencyTollRateInterval, s => s.cyc.Id, tri => tri.CityYearCurrencyId, (s, tri) => new { cycId = s.cyc.Id, tri })
+                .Join(appDbContext.CycTaxRateInterval, s => s.cyc.Id, tri => tri.CityYearCurrencyId, (s, tri) => new { cycId = s.cyc.Id, tri })
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
 
@@ -34,21 +34,21 @@
                 .ToDictionary(k => k.Key, v => v.Select(i => i.tri).OrderBy(o => o.From).AsEnumerable());
 
             var taxFreeVehicleCombinedData = await cityYearBaseQuerable
-                .Join(appDbContext.CityYearCurrencyTaxFreeVehicleType, s => s.cyc.Id, tfvt => tfvt.CityYearCurrencyId, (s, tfvt) => new { cycId = s.cyc.Id, tfvt.VehicleType!.Type })
+                .Join(appDbContext.CycTaxFreeVehicleType, s => s.cyc.Id, tfvt => tfvt.CityYearCurrencyId, (s, tfvt) => new { cycId = s.cyc.Id, tfvt.VehicleType!.Type })
                 .ToListAsync(cancellationToken)
                 .ConfigureAwait(false);
 
             var taxFreeVehicleByYear = taxFreeVehicleCombinedData?.GroupBy(x => x.cycId).ToDictionary(k => k.Key, v => v.Select(i => i.Type));
 
             var taxFreeDatePeriodCombinedData = await cityYearBaseQuerable
-               .Join(appDbContext.CityYearCurrencyTaxFreeDatePeriod, s => s.cyc.Id, tfdp => tfdp.CityYearCurrencyId, (s, tfdp) => new { cycId = s.cyc.Id, tfdp })
+               .Join(appDbContext.CycTaxFreeDatePeriod, s => s.cyc.Id, tfdp => tfdp.CityYearCurrencyId, (s, tfdp) => new { cycId = s.cyc.Id, tfdp })
                .ToListAsync(cancellationToken)
                .ConfigureAwait(false);
 
             var taxFreeDatePeriodByYear = taxFreeDatePeriodCombinedData?.GroupBy(x => x.cycId).ToDictionary(k => k.Key, v => v.Select(i => i.tfdp));
 
             return await cityYearBaseQuerable
-            .Join(appDbContext.CityYearCurrencyRuleSheet, s => s.cyc.Id, cycr => cycr.CityYearCurrencyId, (s, cycr) => new { s.c, s.cyc, cycr })
+            .Join(appDbContext.CycRuleSheet, s => s.cyc.Id, cycr => cycr.CityYearCurrencyId, (s, cycr) => new { s.c, s.cyc, cycr })
 
             .GroupJoin(appDbContext.HolidayTaxFreePeriod, s => s.cycr.Id, htfp => htfp.CityYearCurrencyRuleSheetId, (s, htfp) => new { s.c, s.cyc, s.cycr, htfp })
             .SelectMany(g => g.htfp.DefaultIfEmpty(), (s, htfp) => new { s.c, s.cyc, s.cycr, htfp })
@@ -58,15 +58,15 @@
                 City = x.c,
                 Year = x.cyc.Year,
                 CurrencyUnit = x.cyc.CurrencyUnit,
-                TollRateIntervals = tollRateByYear[x.cyc.Id],
-                PublicHolidays = swedenPublicHoliday.PublicHolidays(x.cyc.Year),
+                TaxRateIntervals = tollRateByYear[x.cyc.Id],
+                PublicHolidays = holidayRepository.GetPublicHolidays(x.c, x.cyc.Year),
                 TaxFreePeriods = taxFreeDatePeriodByYear != null ? taxFreeDatePeriodByYear[x.cyc.Id] : null,
                 TaxFreeVehicleTypes = taxFreeVehicleByYear != null ? taxFreeVehicleByYear[x.cyc.Id] : null,
                 HolidayTaxFreePeriod = x.htfp,
-                MaxTollFeePerDay = x.cycr.MaxTollFeePerDay,
+                MaxTaxFeePerDay = x.cycr.MaxTollFeePerDay,
                 SingleChargeDurationPerMinute = x.cycr.SingleChargeDurationPerMinute,
-                IsWeekendTollFreeRuleApplied = x.cycr.IsWeekendTollFreeRuleApplied,
-                IsHolidayTollFreeRuleApplied = x.cycr.IsHolidayTollFreeRuleApplied,
+                IsWeekendTaxFreeRuleApplied = x.cycr.IsWeekendTollFreeRuleApplied,
+                IsHolidayTaxFreeRuleApplied = x.cycr.IsHolidayTollFreeRuleApplied,
             })
             .ToDictionaryAsync(key => key.Year, value => value as IRuleSheet, cancellationToken)
             .ConfigureAwait(false);

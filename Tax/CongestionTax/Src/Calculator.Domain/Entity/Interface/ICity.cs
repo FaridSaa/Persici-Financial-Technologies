@@ -1,4 +1,4 @@
-﻿namespace Calculator.Domain.Entity
+﻿namespace Calculator.Domain.Entity.Interface
 {
     public interface ICity
     {

@@ -1,6 +1,6 @@
 ﻿namespace Calculator.Domain.Repository
 {
-    using Calculator.Domain.Entity;
+    using Calculator.Domain.Entity.Interface;
 
     public interface IRepository
     {

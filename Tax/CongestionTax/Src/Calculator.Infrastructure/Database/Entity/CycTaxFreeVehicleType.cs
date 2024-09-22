@@ -3,8 +3,8 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table(nameof(CityYearCurrencyTaxFreeVehicleType))]
-    public class CityYearCurrencyTaxFreeVehicleType
+    [Table(nameof(CycTaxFreeVehicleType))]
+    public class CycTaxFreeVehicleType
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }

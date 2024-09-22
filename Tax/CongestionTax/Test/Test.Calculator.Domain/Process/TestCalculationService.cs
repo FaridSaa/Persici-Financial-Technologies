@@ -1,4 +1,6 @@
 ﻿using Calculator.Domain.Entity;
+using Calculator.Domain.Entity.Enum;
+using Calculator.Domain.Entity.Interface;
 using Calculator.Domain.Process;
 using Calculator.Domain.Repository;
 using Moq;
@@ -22,7 +24,7 @@ namespace Test.Calculator.Domain.Process
             mockRuleSheet.SetupGet(x => x.City).Returns(mockCity.Object);
             mockRuleSheet.SetupGet(x => x.Year).Returns(2013);
             mockRuleSheet.SetupGet(x => x.CurrencyUnit).Returns(CurrencyUnitEnum.SEK);
-            mockRuleSheet.SetupGet(x => x.TollRateIntervals).Returns(new List<TollRateInterval>()
+            mockRuleSheet.SetupGet(x => x.TaxRateIntervals).Returns(new List<TaxRateInterval>()
             {
                 new() { From = new TimeSpan(06,00,00), To = new TimeSpan(06,29,00), Fee = 8 },
                 new() { From = new TimeSpan(06,30,00), To = new TimeSpan(06,59,00), Fee = 13 },
@@ -56,10 +58,10 @@ namespace Test.Calculator.Domain.Process
             holidayPeriod.Object.DayBefore = 1;
 
             mockRuleSheet.SetupGet(x => x.HolidayTaxFreePeriod).Returns(holidayPeriod.Object);
-            mockRuleSheet.SetupGet(x => x.MaxTollFeePerDay).Returns(60);
+            mockRuleSheet.SetupGet(x => x.MaxTaxFeePerDay).Returns(60);
             mockRuleSheet.SetupGet(x => x.SingleChargeDurationPerMinute).Returns(60);
-            mockRuleSheet.SetupGet(x => x.IsHolidayTollFreeRuleApplied).Returns(true);
-            mockRuleSheet.SetupGet(x => x.IsWeekendTollFreeRuleApplied).Returns(true);
+            mockRuleSheet.SetupGet(x => x.IsHolidayTaxFreeRuleApplied).Returns(true);
+            mockRuleSheet.SetupGet(x => x.IsWeekendTaxFreeRuleApplied).Returns(true);
 
             var ruleSheetDic = new Dictionary<int, IRuleSheet>() { { 2013, mockRuleSheet.Object } };
 
@@ -97,7 +99,7 @@ namespace Test.Calculator.Domain.Process
             mockRuleSheet.SetupGet(x => x.City).Returns(mockCity.Object);
             mockRuleSheet.SetupGet(x => x.Year).Returns(2013);
             mockRuleSheet.SetupGet(x => x.CurrencyUnit).Returns(CurrencyUnitEnum.SEK);
-            mockRuleSheet.SetupGet(x => x.TollRateIntervals).Returns(new List<TollRateInterval>()
+            mockRuleSheet.SetupGet(x => x.TaxRateIntervals).Returns(new List<TaxRateInterval>()
             {
                 new() { From = new TimeSpan(06,00,00), To = new TimeSpan(06,29,00), Fee = 8 },
                 new() { From = new TimeSpan(06,30,00), To = new TimeSpan(06,59,00), Fee = 13 },
@@ -131,10 +133,10 @@ namespace Test.Calculator.Domain.Process
             holidayPeriod.Object.DayBefore = 1;
 
             mockRuleSheet.SetupGet(x => x.HolidayTaxFreePeriod).Returns(holidayPeriod.Object);
-            mockRuleSheet.SetupGet(x => x.MaxTollFeePerDay).Returns(60);
+            mockRuleSheet.SetupGet(x => x.MaxTaxFeePerDay).Returns(60);
             mockRuleSheet.SetupGet(x => x.SingleChargeDurationPerMinute).Returns(60);
-            mockRuleSheet.SetupGet(x => x.IsHolidayTollFreeRuleApplied).Returns(true);
-            mockRuleSheet.SetupGet(x => x.IsWeekendTollFreeRuleApplied).Returns(true);
+            mockRuleSheet.SetupGet(x => x.IsHolidayTaxFreeRuleApplied).Returns(true);
+            mockRuleSheet.SetupGet(x => x.IsWeekendTaxFreeRuleApplied).Returns(true);
 
             var ruleSheetDic = new Dictionary<int, IRuleSheet>() { { 2013, mockRuleSheet.Object } };
 
@@ -203,7 +205,7 @@ namespace Test.Calculator.Domain.Process
             mockRuleSheet.SetupGet(x => x.City).Returns(mockCity.Object);
             mockRuleSheet.SetupGet(x => x.Year).Returns(2013);
             mockRuleSheet.SetupGet(x => x.CurrencyUnit).Returns(CurrencyUnitEnum.SEK);
-            mockRuleSheet.SetupGet(x => x.TollRateIntervals).Returns(new List<TollRateInterval>()
+            mockRuleSheet.SetupGet(x => x.TaxRateIntervals).Returns(new List<TaxRateInterval>()
             {
                 new() { From = new TimeSpan(06,00,00), To = new TimeSpan(06,29,00), Fee = 8 },
                 new() { From = new TimeSpan(06,30,00), To = new TimeSpan(06,59,00), Fee = 13 },
@@ -238,10 +240,10 @@ namespace Test.Calculator.Domain.Process
             holidayPeriod.SetupGet(x => x.DayBefore).Returns(1).Verifiable();
 
             mockRuleSheet.SetupGet(x => x.HolidayTaxFreePeriod).Returns(holidayPeriod.Object);
-            mockRuleSheet.SetupGet(x => x.MaxTollFeePerDay).Returns(60);
+            mockRuleSheet.SetupGet(x => x.MaxTaxFeePerDay).Returns(60);
             mockRuleSheet.SetupGet(x => x.SingleChargeDurationPerMinute).Returns(60);
-            mockRuleSheet.SetupGet(x => x.IsHolidayTollFreeRuleApplied).Returns(true);
-            mockRuleSheet.SetupGet(x => x.IsWeekendTollFreeRuleApplied).Returns(true);
+            mockRuleSheet.SetupGet(x => x.IsHolidayTaxFreeRuleApplied).Returns(true);
+            mockRuleSheet.SetupGet(x => x.IsWeekendTaxFreeRuleApplied).Returns(true);
 
             var ruleSheetDic = new Dictionary<int, IRuleSheet>() { { 2013, mockRuleSheet.Object } };
 
@@ -338,7 +340,7 @@ namespace Test.Calculator.Domain.Process
             mockRuleSheet.SetupGet(x => x.City).Returns(mockCity.Object);
             mockRuleSheet.SetupGet(x => x.Year).Returns(2013);
             mockRuleSheet.SetupGet(x => x.CurrencyUnit).Returns(CurrencyUnitEnum.SEK);
-            mockRuleSheet.SetupGet(x => x.TollRateIntervals).Returns(new List<TollRateInterval>()
+            mockRuleSheet.SetupGet(x => x.TaxRateIntervals).Returns(new List<TaxRateInterval>()
             {
                 new() { From = new TimeSpan(06,00,00), To = new TimeSpan(06,29,00), Fee = 8 },
                 new() { From = new TimeSpan(06,30,00), To = new TimeSpan(06,59,00), Fee = 13 },
@@ -373,10 +375,10 @@ namespace Test.Calculator.Domain.Process
             holidayPeriod.Object.DayBefore = 1;
 
             mockRuleSheet.SetupGet(x => x.HolidayTaxFreePeriod).Returns(holidayPeriod.Object);
-            mockRuleSheet.SetupGet(x => x.MaxTollFeePerDay).Returns(60);
+            mockRuleSheet.SetupGet(x => x.MaxTaxFeePerDay).Returns(60);
             mockRuleSheet.SetupGet(x => x.SingleChargeDurationPerMinute).Returns(60);
-            mockRuleSheet.SetupGet(x => x.IsHolidayTollFreeRuleApplied).Returns(true);
-            mockRuleSheet.SetupGet(x => x.IsWeekendTollFreeRuleApplied).Returns(true);
+            mockRuleSheet.SetupGet(x => x.IsHolidayTaxFreeRuleApplied).Returns(true);
+            mockRuleSheet.SetupGet(x => x.IsWeekendTaxFreeRuleApplied).Returns(true);
 
             var ruleSheetDic = new Dictionary<int, IRuleSheet>() { { 2013, mockRuleSheet.Object } };
 
@@ -432,7 +434,7 @@ namespace Test.Calculator.Domain.Process
         //test whit diffrent rule sheet diffrent city diffrent year
     }
 
-    public class TollRateInterval : ITollRateInterval
+    public class TaxRateInterval : ITaxRateInterval
     {
         public TimeSpan From { get; set; }
         public TimeSpan To { get; set; }

@@ -1,6 +1,6 @@
-﻿namespace Calculator.Domain.Entity
+﻿namespace Calculator.Domain.Entity.Interface
 {
-    public interface ITollRateInterval
+    public interface ITaxRateInterval
     {
         TimeSpan From { get; set; }
         TimeSpan To { get; set; }

@@ -1,6 +1,7 @@
 ﻿namespace Calculator.Domain.Process
 {
     using Calculator.Domain.Entity;
+    using Calculator.Domain.Entity.Interface;
     using Calculator.Domain.Repository;
 
     public class CalculationService(IRepository repository) : ICalculationService
@@ -8,8 +9,8 @@
         private readonly IRepository repository = repository;
         public async Task<IEnumerable<DateTax>> CalculateAsync(ICity city, IVehicle vehicle, IEnumerable<DateTime> dateTimes, CancellationToken cancellationToken)
         {
-            //i would use fluent validation on input and using result pattern for output
-            //first version of logic , maybe later some improvment
+            //I would use fluent validation on input and using result pattern for output
+            //First version of logic , maybe later some improvment
 
             var years = dateTimes.Select(s => s.Date.Year).Distinct();
             var ruleSheetByYear = await repository.GetRuleSheetAsync(city, years, cancellationToken).ConfigureAwait(false);
@@ -37,7 +38,7 @@
                     continue;
                 }
 
-                if (ruleSheet.IsWeekendTollFreeRuleApplied)
+                if (ruleSheet.IsWeekendTaxFreeRuleApplied)
                 {
                     if (dateTimePerDay.Date is { DayOfWeek: DayOfWeek.Saturday or DayOfWeek.Sunday })
                     {
@@ -56,7 +57,7 @@
                     }
                 }
 
-                if (ruleSheet.IsHolidayTollFreeRuleApplied)
+                if (ruleSheet.IsHolidayTaxFreeRuleApplied)
                 {
                     if (ruleSheet.PublicHolidays.Contains(dateTimePerDay.Date))
                     {
@@ -97,7 +98,7 @@
                                 i = j;
                                 if (sequence.Count >= 2)
                                 {
-                                    dayFee += ruleSheet.TollRateIntervals.Max(s => s.Fee);
+                                    dayFee += ruleSheet.TaxRateIntervals.Max(s => s.Fee);
                                 }
                                 break;
                             }
@@ -108,8 +109,8 @@
 
                 foreach (var each in dateTimePerDay.Time)
                 {
-                    var rate = ruleSheet.TollRateIntervals.FirstOrDefault(x => each >= x.From && each <= x.To)
-                        ?? ruleSheet.TollRateIntervals
+                    var rate = ruleSheet.TaxRateIntervals.FirstOrDefault(x => each >= x.From && each <= x.To)
+                        ?? ruleSheet.TaxRateIntervals
                         .Where(x => (x.To - x.From).TotalMinutes < 0)
                         .Where(x => each >= x.From).LastOrDefault();
 
@@ -119,9 +120,9 @@
                     }
                 }
 
-                if (ruleSheet.MaxTollFeePerDay is not null && dayFee > ruleSheet.MaxTollFeePerDay)
+                if (ruleSheet.MaxTaxFeePerDay is not null && dayFee > ruleSheet.MaxTaxFeePerDay)
                 {
-                    dayFee = ruleSheet.MaxTollFeePerDay.Value;
+                    dayFee = ruleSheet.MaxTaxFeePerDay.Value;
                 }
                 tollFees.Add(new() { Date = dateTimePerDay.Date, Fee = dayFee, Unit = ruleSheet.CurrencyUnit });
             }

@@ -1,6 +1,6 @@
 ﻿namespace Calculator.Infrastructure.Database.Entity
 {
-    using Calculator.Domain.Entity;
+    using Calculator.Domain.Entity.Interface;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,6 +12,6 @@
         public int DayBefore { get; set; }
         public int DayAfter { get; set; }
         public int CityYearCurrencyRuleSheetId { get; set; }
-        [ForeignKey(nameof(CityYearCurrencyRuleSheetId))] public virtual CityYearCurrencyRuleSheet? CityYearCurrencyRuleSheet { get; set; }
+        [ForeignKey(nameof(CityYearCurrencyRuleSheetId))] public virtual CycRuleSheet? CycRuleSheet { get; set; }
     }
 }

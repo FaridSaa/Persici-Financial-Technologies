@@ -1,6 +1,6 @@
 ﻿namespace Calculator.Infrastructure.Database.Entity
 {
-    using Calculator.Domain.Entity;
+    using Calculator.Domain.Entity.Enum;
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 

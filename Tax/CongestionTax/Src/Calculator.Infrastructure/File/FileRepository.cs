@@ -1,6 +1,6 @@
 ﻿namespace Calculator.Infrastructure.File
 {
-    using Calculator.Domain.Entity;
+    using Calculator.Domain.Entity.Interface;
     using Calculator.Domain.Repository;
     public class FileRepository : IRepository
     {

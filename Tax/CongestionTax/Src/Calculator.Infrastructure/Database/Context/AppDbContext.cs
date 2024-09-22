@@ -3,15 +3,15 @@
     using Calculator.Infrastructure.Database.Entity;
     using Microsoft.EntityFrameworkCore;
 
-    public class AppDbContext(DbContextOptions option) : DbContext(option) //define db config from IoC container
+    public class AppDbContext(DbContextOptions option) : DbContext(option) //Define db config from IoC container
     {
         public DbSet<City> City { get; set; }
         public DbSet<VehicleType> VehicleType { get; set; }
         public DbSet<CityYearCurrency> CityYearCurrency { get; set; }
-        public DbSet<CityYearCurrencyTaxFreeVehicleType> CityYearCurrencyTaxFreeVehicleType { get; set; }
-        public DbSet<CityYearCurrencyTaxFreeDatePeriod> CityYearCurrencyTaxFreeDatePeriod { get; set; }
-        public DbSet<CityYearCurrencyTollRateInterval> CityYearCurrencyTollRateInterval { get; set; }
-        public DbSet<CityYearCurrencyRuleSheet> CityYearCurrencyRuleSheet { get; set; }
+        public DbSet<CycTaxFreeVehicleType> CycTaxFreeVehicleType { get; set; }
+        public DbSet<CycTaxFreeDatePeriod> CycTaxFreeDatePeriod { get; set; }
+        public DbSet<CycTaxRateInterval> CycTaxRateInterval { get; set; }
+        public DbSet<CycRuleSheet> CycRuleSheet { get; set; }
         public DbSet<HolidayTaxFreePeriod> HolidayTaxFreePeriod { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -23,23 +23,23 @@
             _ = modelBuilder.Entity<CityYearCurrency>().HasIndex(i => new { i.CityId, i.Year }).IsUnique();
             _ = modelBuilder.Entity<CityYearCurrency>().HasOne(r => r.City).WithMany().OnDelete(DeleteBehavior.Cascade);
 
-            _ = modelBuilder.Entity<CityYearCurrencyRuleSheet>().HasOne(r => r.CityYearCurrency).WithOne().OnDelete(DeleteBehavior.Cascade);
+            _ = modelBuilder.Entity<CycRuleSheet>().HasOne(r => r.CityYearCurrency).WithOne().OnDelete(DeleteBehavior.Cascade);
 
-            _ = modelBuilder.Entity<CityYearCurrencyTaxFreeVehicleType>().HasIndex(i => new { i.CityYearCurrencyId, i.VehicleTypeId }).IsUnique();
-            _ = modelBuilder.Entity<CityYearCurrencyTaxFreeVehicleType>().HasOne(r => r.CityYearCurrency).WithMany().OnDelete(DeleteBehavior.Cascade);
-            _ = modelBuilder.Entity<CityYearCurrencyTaxFreeVehicleType>().HasOne(r => r.VehicleType).WithMany().OnDelete(DeleteBehavior.Cascade);
+            _ = modelBuilder.Entity<CycTaxFreeVehicleType>().HasIndex(i => new { i.CityYearCurrencyId, i.VehicleTypeId }).IsUnique();
+            _ = modelBuilder.Entity<CycTaxFreeVehicleType>().HasOne(r => r.CityYearCurrency).WithMany().OnDelete(DeleteBehavior.Cascade);
+            _ = modelBuilder.Entity<CycTaxFreeVehicleType>().HasOne(r => r.VehicleType).WithMany().OnDelete(DeleteBehavior.Cascade);
 
-            _ = modelBuilder.Entity<CityYearCurrencyTaxFreeDatePeriod>().HasIndex(i => new { i.CityYearCurrencyId, i.From , i.To }).IsUnique();
-            _ = modelBuilder.Entity<CityYearCurrencyTaxFreeDatePeriod>().HasOne(r => r.CityYearCurrency).WithMany().OnDelete(DeleteBehavior.Cascade);
+            _ = modelBuilder.Entity<CycTaxFreeDatePeriod>().HasIndex(i => new { i.CityYearCurrencyId, i.From , i.To }).IsUnique();
+            _ = modelBuilder.Entity<CycTaxFreeDatePeriod>().HasOne(r => r.CityYearCurrency).WithMany().OnDelete(DeleteBehavior.Cascade);
 
-            _ = modelBuilder.Entity<CityYearCurrencyTollRateInterval>().HasIndex(i => new { i.CityYearCurrencyId, i.From , i.To }).IsUnique();
-            _ = modelBuilder.Entity<CityYearCurrencyTollRateInterval>().HasOne(r => r.CityYearCurrency).WithMany().OnDelete(DeleteBehavior.Cascade);
+            _ = modelBuilder.Entity<CycTaxRateInterval>().HasIndex(i => new { i.CityYearCurrencyId, i.From , i.To }).IsUnique();
+            _ = modelBuilder.Entity<CycTaxRateInterval>().HasOne(r => r.CityYearCurrency).WithMany().OnDelete(DeleteBehavior.Cascade);
 
-            _ = modelBuilder.Entity<HolidayTaxFreePeriod>().HasOne(r => r.CityYearCurrencyRuleSheet).WithOne().OnDelete(DeleteBehavior.Cascade);
+            _ = modelBuilder.Entity<HolidayTaxFreePeriod>().HasOne(r => r.CycRuleSheet).WithOne().OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
 
-            //probably removing some repeat indexes here after base call , combined indexes contains FK index too
+            //Probably removing some repeated indexes here after base call , Combined indexes contain FK index too
         }
     }
 }

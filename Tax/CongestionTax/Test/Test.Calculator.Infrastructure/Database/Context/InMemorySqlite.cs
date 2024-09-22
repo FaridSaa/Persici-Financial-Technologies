@@ -1,11 +1,11 @@
 ﻿using Calculator.Infrastructure.Database.Context;
 using Calculator.Infrastructure.Database.Entity;
-using Calculator.Domain.Entity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using System.Data.Common;
+using Calculator.Domain.Entity.Enum;
 
 namespace Test.Calculator.Infrastructure.Database
 {
@@ -33,70 +33,70 @@ namespace Test.Calculator.Infrastructure.Database
                 CurrencyUnit = CurrencyUnitEnum.SEK
             });
 
-            _ = DbContext.CityYearCurrencyTollRateInterval.Add(new CityYearCurrencyTollRateInterval()
+            _ = DbContext.CycTaxRateInterval.Add(new CycTaxRateInterval()
             {
                 From = new TimeSpan(06, 00, 00),
                 To = new TimeSpan(06, 29, 00),
                 Fee = 8,
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
             });
-            _ = DbContext.CityYearCurrencyTollRateInterval.Add(new CityYearCurrencyTollRateInterval()
+            _ = DbContext.CycTaxRateInterval.Add(new CycTaxRateInterval()
             {
                 From = new TimeSpan(06, 30, 00),
                 To = new TimeSpan(06, 59, 00),
                 Fee = 13,
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
             });
-            _ = DbContext.CityYearCurrencyTollRateInterval.Add(new CityYearCurrencyTollRateInterval()
+            _ = DbContext.CycTaxRateInterval.Add(new CycTaxRateInterval()
             {
                 From = new TimeSpan(07, 00, 00),
                 To = new TimeSpan(07, 59, 00),
                 Fee = 18,
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
             });
-            _ = DbContext.CityYearCurrencyTollRateInterval.Add(new CityYearCurrencyTollRateInterval()
+            _ = DbContext.CycTaxRateInterval.Add(new CycTaxRateInterval()
             {
                 From = new TimeSpan(08, 00, 00),
                 To = new TimeSpan(08, 29, 00),
                 Fee = 13,
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
             });
-            _ = DbContext.CityYearCurrencyTollRateInterval.Add(new CityYearCurrencyTollRateInterval()
+            _ = DbContext.CycTaxRateInterval.Add(new CycTaxRateInterval()
             {
                 From = new TimeSpan(08, 30, 00),
                 To = new TimeSpan(14, 59, 00),
                 Fee = 8,
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
             });
-            _ = DbContext.CityYearCurrencyTollRateInterval.Add(new CityYearCurrencyTollRateInterval()
+            _ = DbContext.CycTaxRateInterval.Add(new CycTaxRateInterval()
             {
                 From = new TimeSpan(15, 00, 00),
                 To = new TimeSpan(15, 29, 00),
                 Fee = 13,
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
             });
-            _ = DbContext.CityYearCurrencyTollRateInterval.Add(new CityYearCurrencyTollRateInterval()
+            _ = DbContext.CycTaxRateInterval.Add(new CycTaxRateInterval()
             {
                 From = new TimeSpan(15, 30, 00),
                 To = new TimeSpan(16, 59, 00),
                 Fee = 18,
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
             });
-            _ = DbContext.CityYearCurrencyTollRateInterval.Add(new CityYearCurrencyTollRateInterval()
+            _ = DbContext.CycTaxRateInterval.Add(new CycTaxRateInterval()
             {
                 From = new TimeSpan(17, 00, 00),
                 To = new TimeSpan(17, 59, 00),
                 Fee = 13,
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
             });
-            _ = DbContext.CityYearCurrencyTollRateInterval.Add(new CityYearCurrencyTollRateInterval()
+            _ = DbContext.CycTaxRateInterval.Add(new CycTaxRateInterval()
             {
                 From = new TimeSpan(18, 00, 00),
                 To = new TimeSpan(18, 29, 00),
                 Fee = 8,
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
             });
-            _ = DbContext.CityYearCurrencyTollRateInterval.Add(new CityYearCurrencyTollRateInterval()
+            _ = DbContext.CycTaxRateInterval.Add(new CycTaxRateInterval()
             {
                 From = new TimeSpan(18, 30, 00),
                 To = new TimeSpan(05, 59, 00),
@@ -105,7 +105,7 @@ namespace Test.Calculator.Infrastructure.Database
             });
 
             //During the month of July Also Any Other Periods
-            _ = DbContext.CityYearCurrencyTaxFreeDatePeriod.Add(new CityYearCurrencyTaxFreeDatePeriod()
+            _ = DbContext.CycTaxFreeDatePeriod.Add(new CycTaxFreeDatePeriod()
             {
                 From = new DateTime(2013, 07, 01),
                 To = new DateTime(2013, 07, 31),
@@ -120,38 +120,38 @@ namespace Test.Calculator.Infrastructure.Database
             var diplomat = DbContext.VehicleType.Add(new VehicleType() { Id = 6, Type = VehicleTypeEnum.Diplomat });
             var foreign = DbContext.VehicleType.Add(new VehicleType() { Id = 7, Type = VehicleTypeEnum.Foreign });
 
-            _ = DbContext.CityYearCurrencyTaxFreeVehicleType.Add(new CityYearCurrencyTaxFreeVehicleType()
+            _ = DbContext.CycTaxFreeVehicleType.Add(new CycTaxFreeVehicleType()
             {
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
                 VehicleTypeId = motor.Entity.Id
             });
-            _ = DbContext.CityYearCurrencyTaxFreeVehicleType.Add(new CityYearCurrencyTaxFreeVehicleType()
+            _ = DbContext.CycTaxFreeVehicleType.Add(new CycTaxFreeVehicleType()
             {
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
                 VehicleTypeId = bus.Entity.Id
             });
-            _ = DbContext.CityYearCurrencyTaxFreeVehicleType.Add(new CityYearCurrencyTaxFreeVehicleType()
+            _ = DbContext.CycTaxFreeVehicleType.Add(new CycTaxFreeVehicleType()
             {
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
                 VehicleTypeId = millitry.Entity.Id
             });
-            _ = DbContext.CityYearCurrencyTaxFreeVehicleType.Add(new CityYearCurrencyTaxFreeVehicleType()
+            _ = DbContext.CycTaxFreeVehicleType.Add(new CycTaxFreeVehicleType()
             {
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
                 VehicleTypeId = emergency.Entity.Id
             });
-            _ = DbContext.CityYearCurrencyTaxFreeVehicleType.Add(new CityYearCurrencyTaxFreeVehicleType()
+            _ = DbContext.CycTaxFreeVehicleType.Add(new CycTaxFreeVehicleType()
             {
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
                 VehicleTypeId = diplomat.Entity.Id
             });
-            _ = DbContext.CityYearCurrencyTaxFreeVehicleType.Add(new CityYearCurrencyTaxFreeVehicleType()
+            _ = DbContext.CycTaxFreeVehicleType.Add(new CycTaxFreeVehicleType()
             {
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
                 VehicleTypeId = foreign.Entity.Id
             });
 
-            var ruleSheet = DbContext.CityYearCurrencyRuleSheet.Add(new CityYearCurrencyRuleSheet()
+            var ruleSheet = DbContext.CycRuleSheet.Add(new CycRuleSheet()
             {
                 Id = 1,
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,

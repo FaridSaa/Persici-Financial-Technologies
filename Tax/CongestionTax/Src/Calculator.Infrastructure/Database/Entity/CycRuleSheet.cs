@@ -3,8 +3,8 @@
     using System.ComponentModel.DataAnnotations;
     using System.ComponentModel.DataAnnotations.Schema;
 
-    [Table(nameof(CityYearCurrencyRuleSheet))]
-    public class CityYearCurrencyRuleSheet
+    [Table(nameof(CycRuleSheet))]
+    public class CycRuleSheet
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
