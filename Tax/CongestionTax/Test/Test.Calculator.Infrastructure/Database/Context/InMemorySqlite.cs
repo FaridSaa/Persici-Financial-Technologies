@@ -155,9 +155,9 @@ namespace Test.Calculator.Infrastructure.Database
             {
                 Id = 1,
                 CityYearCurrencyId = cityYearCurrency.Entity.Id,
-                IsHolidayTollFreeRuleApplied = true,
-                IsWeekendTollFreeRuleApplied = true,
-                MaxTollFeePerDay = 60,
+                IsHolidayTaxFreeRuleApplied = true,
+                IsWeekendTaxFreeRuleApplied = true,
+                MaxTaxFeePerDay = 60,
                 SingleChargeDurationPerMinute = 60,
             });
 

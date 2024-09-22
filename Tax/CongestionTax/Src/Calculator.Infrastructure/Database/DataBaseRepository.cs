@@ -63,10 +63,10 @@
                 TaxFreePeriods = taxFreeDatePeriodByYear != null ? taxFreeDatePeriodByYear[x.cyc.Id] : null,
                 TaxFreeVehicleTypes = taxFreeVehicleByYear != null ? taxFreeVehicleByYear[x.cyc.Id] : null,
                 HolidayTaxFreePeriod = x.htfp,
-                MaxTaxFeePerDay = x.cycr.MaxTollFeePerDay,
+                MaxTaxFeePerDay = x.cycr.MaxTaxFeePerDay,
                 SingleChargeDurationPerMinute = x.cycr.SingleChargeDurationPerMinute,
-                IsWeekendTaxFreeRuleApplied = x.cycr.IsWeekendTollFreeRuleApplied,
-                IsHolidayTaxFreeRuleApplied = x.cycr.IsHolidayTollFreeRuleApplied,
+                IsWeekendTaxFreeRuleApplied = x.cycr.IsWeekendTaxFreeRuleApplied,
+                IsHolidayTaxFreeRuleApplied = x.cycr.IsHolidayTaxFreeRuleApplied,
             })
             .ToDictionaryAsync(key => key.Year, value => value as IRuleSheet, cancellationToken)
             .ConfigureAwait(false);
