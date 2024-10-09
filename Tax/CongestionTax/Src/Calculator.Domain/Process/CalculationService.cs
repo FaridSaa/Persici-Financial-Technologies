@@ -7,11 +7,11 @@
     public class CalculationService(IRepository repository) : ICalculationService
     {
         private readonly IRepository repository = repository;
+
+#warning Use fluent validation on input data and implement result pattern for ouput
+#warning Some refactor needed for clean code
         public async Task<IEnumerable<DateTax>> CalculateAsync(ICity city, IVehicle vehicle, IEnumerable<DateTime> dateTimes, CancellationToken cancellationToken)
         {
-            //I would use fluent validation on input and using result pattern for output
-            //First version of logic , maybe later some improvment
-
             var years = dateTimes.Select(s => s.Date.Year).Distinct();
             var ruleSheetByYear = await repository.GetRuleSheetAsync(city, years, cancellationToken).ConfigureAwait(false);
 

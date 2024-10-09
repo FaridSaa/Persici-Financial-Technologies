@@ -3,7 +3,7 @@
     using Calculator.Infrastructure.Database.Entity;
     using Microsoft.EntityFrameworkCore;
 
-    public class AppDbContext(DbContextOptions option) : DbContext(option) //Define db config from IoC container
+    public class AppDbContext(DbContextOptions option) : DbContext(option)
     {
         public DbSet<City> City { get; set; }
         public DbSet<VehicleType> VehicleType { get; set; }
@@ -14,6 +14,7 @@
         public DbSet<CycRuleSheet> CycRuleSheet { get; set; }
         public DbSet<HolidayTaxFreePeriod> HolidayTaxFreePeriod { get; set; }
 
+#warning Remove repeated indexes after base call
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             _ = modelBuilder.Entity<City>().HasIndex(i => i.Name).IsUnique();
@@ -38,8 +39,6 @@
             _ = modelBuilder.Entity<HolidayTaxFreePeriod>().HasOne(r => r.CycRuleSheet).WithOne().OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
-
-            //Probably removing some repeated indexes here after base call , Combined indexes contain FK index too
         }
     }
 }

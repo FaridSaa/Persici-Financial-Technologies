@@ -13,10 +13,9 @@
         private readonly AppDbContext appDbContext = appDbContext;
         private readonly IHolidayRepository holidayRepository = holidayRepository;
 
+#warning Reduce query requests
         public async Task<IDictionary<int, IRuleSheet>> GetRuleSheetAsync(ICity city, IEnumerable<int> years, CancellationToken cancellationToken)
         {
-            //perhaps we can reduce query requests , maybe later
-
             var cityYearBaseQuerable = appDbContext.City
                 .AsNoTracking()
                 .Where(x => x.Name == city.Name)
